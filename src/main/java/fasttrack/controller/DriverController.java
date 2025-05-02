@@ -1,15 +1,18 @@
 package fasttrack.controller;
 
+import fasttrack.model.Driver;
 import fasttrack.model.DriverModel;
+import fasttrack.view.DriverView;
+import javax.swing.table.DefaultTableModel;
 
 public class DriverController {
-    private DriverModel Model;
-    private DriverView View;
+    private DriverModel model;
+    private DriverView view;
     private int nextId = 1;
 
     public DriverController(DriverModel model, DriverView view) {
-        this.Model = model;
-        this.View = view;
+        this.model = model;
+        this.view = view;
 
         view.getAddButton().addActionListener(e -> addDriver());
         view.getUpdateButton().addActionListener(e -> updateDriver());
@@ -19,23 +22,23 @@ public class DriverController {
     }
 
     private void addDriver() {
-        String name = View.nametxt.getText();
-        String vehicle = View.vehicletxt.getText();
-        boolean available = View.availableBox.isSelected();
+        String name = view.getNameField().getText();
+        String vehicle = view.getVehicleField().getText();
+        boolean available = view.isAvailableSelected();
 
         Driver newDriver = new Driver(nextId++, name, vehicle, available);
-        Model.addDriver(newDriver);
+        model.addDriver(newDriver);
         loadTable();
     }
 
     private void updateDriver() {
-        int row = View.getDriverTable().getSelectedRow();
+        int row = view.getDriverTable().getSelectedRow();
         if (row == -1) return;
 
-        int id = Integer.parseInt(View.getTableModel().getValueAt(row, 0).toString());
-        String name = View.nameField.getText();
-        String vehicle = View.vehicleField.getText();
-        boolean available = View.availableBox.isSelected();
+        int id = Integer.parseInt(view.getTableModel().getValueAt(row, 0).toString());
+        String name = view.getNameField().getText();
+        String vehicle = view.getVehicleField().getText();
+        boolean available = view.isAvailableSelected();
 
         Driver updatedDriver = new Driver(id, name, vehicle, available);
         model.updateDriver(updatedDriver);
@@ -43,16 +46,16 @@ public class DriverController {
     }
 
     private void deleteDriver() {
-        int row = View.getDriverTable().getSelectedRow();
+        int row = view.getDriverTable().getSelectedRow();
         if (row == -1) return;
 
-        int id = Integer.parseInt(View.getTableModel().getValueAt(row, 0).toString());
+        int id = Integer.parseInt(view.getTableModel().getValueAt(row, 0).toString());
         model.removeDriver(id);
         loadTable();
     }
 
     private void loadTable() {
-        DefaultTableModel tableModel = View.getTableModel();
+        DefaultTableModel tableModel = view.getTableModel();
         tableModel.setRowCount(0);
         for (Driver d : model.getAllDrivers()) {
             tableModel.addRow(new Object[]{
